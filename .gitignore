@@ -1,4 +1,7 @@
 kubeconfig/
 
+kubectl
+get-helm.sh
+
 *.env
 *.env.*
