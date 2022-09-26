@@ -11,9 +11,9 @@ First get a kube config file, and put it in a folder named kubeconfig.
 
 ```bash
 #Let's assume we are using a k3d cluster
-k3d config init
+k3d kubeconfig write mycluster
 mkdir kubeconfig
-mv k3d-default.yaml kubeconfig/k3d-default.yaml
+mv kubeconfig-mycluster.yaml kubeconfig/
 ```
 
 Then run the script ``setup_kube.sh``, it is important to run this file in the context of your shell so you can have the variable ``KUBECONFIG`` available for your shell.
@@ -23,4 +23,11 @@ This script also installs kubectl and helm if you don't have them
 . ./setup_kube.sh
 #or
 source ./setup_kube.sh
+```
+
+# Deploy
+
+Execute the deploying script in the same terminal
+```bash
+./deploy_dev.sh
 ```
