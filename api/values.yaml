@@ -6,12 +6,12 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/woodenmaiden/relfinderreformedapi
-  pullPolicy: Always
+  pullPolicy: Never
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
 # Arguments that would be passed to the api
-args: ["http://sparqlendpoint.cluster:8890/sparql", "-p", "80", "-l", "INFO"]
+args: ["http://sparql.default.svc.cluster.local/sparql", "-p", "80", "-l", "INFO"]
 
 imagePullSecrets: []
 nameOverride: ""
@@ -73,7 +73,7 @@ resources: {}
 
 autoscaling:
   enabled: true
-  minReplicas: 1
+  minReplicas: 2
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
