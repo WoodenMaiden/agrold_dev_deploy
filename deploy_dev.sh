@@ -1,5 +1,8 @@
 #!/bin/bash
 
+normal=$(tput sgr0)
+red=$(tput setaf 1)
+
 if [ -n $(command -v kubectl) ] && [ -n $(command -v helm) ]; then
     kubectl create configmap dataset --from-file=./dataset
 
@@ -10,6 +13,6 @@ if [ -n $(command -v kubectl) ] && [ -n $(command -v helm) ]; then
         helm upgrade --install $(basename "$c") $c
     done
 else
-    echo "\e[31mPlease install Kubectl and helm.\e[0m"
+    echo "${red}Please install Kubectl and helm.$normal"
     echo "You can install them both via the setup_kube.sh script."
 fi

@@ -2,6 +2,12 @@
 
 set -e
 
+normal=$(tput sgr0)
+green=$(tput setaf 4)
+yellow=$(tput setaf 3)
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+
 # returns 0 if answered yes, 1 if answered no
 # $1: question
 function ask_closed_question {
@@ -15,6 +21,17 @@ function ask_closed_question {
     done
 }
 
+# Returns 0 is file has read and write permissions for group and others, returns 1 otherwise
+function is_RW_by_group_and_others {
+    if [ -n "$(stat -c "%a" "$1" | grep ".[2-7][2-7]")" ]; then
+        echo 0
+        return 0
+    else
+        echo 1
+        return 1
+    fi
+}
+
 FIND_YAML_CMD="find kubeconfig/ -regextype egrep -type f -regex '.*\.ya?ml'"
 
 if [ -z $(command -v kubectl) ]; then
@@ -24,7 +41,7 @@ if [ -z $(command -v kubectl) ]; then
         chmod +x ./kubectl
         echo "Moving kubectl to /usr/local/bin"
         sudo mv ./kubectl /usr/local/bin/kubectl
-        echo "\e[32mkubectl installed!\e[0m"
+        echo "${green}mkubectl installed!$normal"
     fi
 fi
 
@@ -35,7 +52,7 @@ if [ -z $(command -v helm) ]; then
         chmod 700 get_helm.sh
         echo "Launching the helm installer"
         ./get_helm.sh
-        echo "\e[32mhelm installed!\e[0m"
+        echo "${green}mhelm installed!$normal"
     fi
 fi
 
@@ -43,22 +60,26 @@ if [ -d ./kubeconfig ]; then
     echo "kubeconfig directory already exists"
     nb_files=$(eval $FIND_YAML_CMD | wc -l)
     if [ $nb_files -eq 0 ]; then
-        echo "No kube config found in this directory"
+        echo "${red}No kubeconfig found in this directory.$normal"
     elif [ $nb_files -eq 1 ]; then
         export KUBECONFIG=$(pwd)/kubeconfig/$(eval $FIND_YAML_CMD)
-        echo "\e[32mKubectl is ready to go!\e[0m"
+        echo "${green}Kubectl is ready to go!$normal"
     else
         echo "Multiple kube config files found in this directory. Please select one:"
         select file in $(eval $FIND_YAML_CMD); do
-            export KUBECONFIG=$(pwd)/kubeconfig/$file
+            export KUBECONFIG=$(pwd)/$file
             break
         done
-        echo "\e[32mKubectl is ready to go!\e[0m"
+        echo "${green}Kubectl is ready to go!$normal"
     fi
-    echo "Note: For security reasons, make sure your kubeconfig files aren't readable and writable by others and group."
+    if [[ $(is_RW_by_group_and_others $KUBECONFIG) -eq "0" ]]; then
+        echo "${yellow}Note: For security reasons, make sure your kubeconfig files aren't readable and writable by others and group.$normal"
+    fi
 
 else 
     mkdir kubeconfig -m 700
-    echo "kubeconfig directory created"
+    echo "kubeconfig directory created. Please put your kubeconfig files in this directory."
 fi
 
+# To avoid your shell to die when an error occurs after this script
+set +e
