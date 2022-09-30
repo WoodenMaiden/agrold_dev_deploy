@@ -6,7 +6,7 @@ red=$(tput setaf 1)
 if [ -n $(command -v kubectl) ] && [ -n $(command -v helm) ]; then
     kubectl create configmap dataset --from-file=./dataset
 
-    CHARTS=$(find . -regextype egrep -type f -name 'Chart.yaml' -exec dirname {} \;)
+    CHARTS=$(find . -regextype egrep -maxdepth 2 -type f -name 'Chart.yaml' -exec dirname {} \;)
 
     # for each elt of the array install or update helm config
     for c in $CHARTS; do

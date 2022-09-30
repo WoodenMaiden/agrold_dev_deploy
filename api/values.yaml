@@ -6,12 +6,19 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/woodenmaiden/relfinderreformedapi
-  pullPolicy: Never
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
 # Arguments that would be passed to the api
-args: ["http://sparql.default.svc.cluster.local/sparql", "-p", "80", "-l", "INFO"]
+args: 
+  - "http://sparql.default.svc.cluster.local/sparql"
+  - "-p"
+  - "80"
+  - "--loglevel"
+  - "DEBUG"
+  - "--postgres-connection-url"
+  - "postgres://postgres:postgres@postgresql.default.svc.cluster.local"
 
 imagePullSecrets: []
 nameOverride: ""
