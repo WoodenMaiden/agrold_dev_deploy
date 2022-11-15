@@ -11,7 +11,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/benc-uk/kubeview
   tag: 0.1.31
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
 imagePullSecrets: []
 nameOverride: ""
@@ -22,7 +22,8 @@ ingress:
   enabled: true
   annotations: {}
   hosts:
-    - host: viz.vmagrold-proto
+    - host: viz
+      domain: vmagrold-proto #Someting to append to .host
   tls: []
   className: ""
 

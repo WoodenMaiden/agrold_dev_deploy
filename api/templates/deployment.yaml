@@ -29,6 +29,9 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
+          env:
+          - name: SPARQL_ADDRESS
+            value: {{ .Values.sparqlAddress | quote}}
           args: 
             {{- toYaml .Values.args | nindent 12 }}
           securityContext:

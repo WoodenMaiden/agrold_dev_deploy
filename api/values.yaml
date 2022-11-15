@@ -6,13 +6,13 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/woodenmaiden/relfinderreformedapi
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
+sparqlAddress: "http://sparql.default.svc.cluster.local/sparql"
 # Arguments that would be passed to the api
-args: 
-  - "http://sparql.default.svc.cluster.local/sparql"
+args:
   - "-p"
   - "80"
   - "--loglevel"
@@ -35,10 +35,12 @@ serviceAccount:
 
 podAnnotations: {}
 
-podSecurityContext: {}
+podSecurityContext:
+  {}
   # fsGroup: 2000
 
-securityContext: {}
+securityContext:
+  {}
   # capabilities:
   #   drop:
   #   - ALL
@@ -53,11 +55,13 @@ service:
 ingress:
   enabled: true
   className: ""
-  annotations: {}
+  annotations:
+    {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: api.vmagrold-proto
+    - host: api
+      domain: vmagrold-proto #Someting to append to .host
       paths:
         - path: /
           pathType: ImplementationSpecific
@@ -66,7 +70,8 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-resources: {}
+resources:
+  {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -80,7 +85,7 @@ resources: {}
 
 autoscaling:
   enabled: true
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80

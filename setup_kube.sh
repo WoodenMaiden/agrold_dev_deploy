@@ -3,7 +3,6 @@
 set -e
 
 normal=$(tput sgr0)
-green=$(tput setaf 4)
 yellow=$(tput setaf 3)
 red=$(tput setaf 1)
 green=$(tput setaf 2)
@@ -82,4 +81,5 @@ else
 fi
 
 # To avoid your shell to die when an error occurs after this script
+# useful when you want to use KUBECONFIG in the calling shell
 set +e
