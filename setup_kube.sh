@@ -11,11 +11,11 @@ green=$(tput setaf 2)
 # $1: question
 function ask_closed_question {
     while true; do
-        read -p "$1 [y/n] " yn
+        read -rp "$1 [y/n] " yn
         case $yn in
             [Yy]* ) echo 0; return 0;;
             [Nn]* ) echo 1; return 1;;
-            * ) echo "Please answer yes or no.";;
+            * ) ;;
         esac
     done
 }
@@ -40,7 +40,7 @@ if [ -z $(command -v kubectl) ]; then
         chmod +x ./kubectl
         echo "Moving kubectl to /usr/local/bin"
         sudo mv ./kubectl /usr/local/bin/kubectl
-        echo "${green}mkubectl installed!$normal"
+        echo "${green}kubectl installed!$normal"
     fi
 fi
 
@@ -51,7 +51,7 @@ if [ -z $(command -v helm) ]; then
         chmod 700 get_helm.sh
         echo "Launching the helm installer"
         ./get_helm.sh
-        echo "${green}mhelm installed!$normal"
+        echo "${green}helm installed!$normal"
     fi
 fi
 
@@ -62,14 +62,19 @@ if [ -d ./kubeconfig ]; then
         echo "${red}No kubeconfig found in this directory.$normal"
     elif [ $nb_files -eq 1 ]; then
         export KUBECONFIG=$(pwd)/kubeconfig/$(eval $FIND_YAML_CMD)
-        echo "${green}Kubectl is ready to go!$normal"
+        echo "${green}Kubectl and Helm are ready to go!$normal"
     else
         echo "Multiple kube config files found in this directory. Please select one:"
         select file in $(eval $FIND_YAML_CMD); do
             export KUBECONFIG=$(pwd)/$file
             break
         done
-        echo "${green}Kubectl is ready to go!$normal"
+
+        if [ $(ask_closed_question "Do you want to move this file to ~/.kube/config? This Will make it available to all shells.") -eq "0" ]; then
+            mkdir -p ~/.kube
+            cp -i $KUBECONFIG ~/.kube/config
+        fi
+        echo "${green}Kubectl and Helm are ready to go!$normal"
     fi
     if [[ $(is_RW_by_group_and_others $KUBECONFIG) -eq "0" ]]; then
         echo "${yellow}Note: For security reasons, make sure your kubeconfig files aren't readable and writable by others and group.$normal"

@@ -22,9 +22,15 @@ Options:
     -w <warpath>: path to the war file to deploy
 
 Tomcat env variables:
-    This programm will find and apply all your variables unless specified as argument
-    You can find them there https://github.com/WoodenMaiden/AgroLD_webapp/blob/easier-deployment/agrold-javaweb/README.md
+    This programm will find and apply all of the following environment variables unless specified as arguments:
     Format <ENV1=a ENV2=B ...>.
+
+    |         Name           |          Description           |        Default value        |
+    |========================|================================|=============================|
+    |      AGROLD_NAME       |   Tomcat context for the app   |            aldp             |
+    |   AGROLD_DESCRIPTION   | Description prompted in Tomcat |                             |
+    |     AGROLD_BASEURL     |         App's base URL         |      http://localhost/      |
+    | AGROLD_SPARQL_ENDPOINT |         SPARQL endpoint        | http://sparql.southgreen.fr |
 EOF
     exit 1
 }
@@ -36,6 +42,7 @@ DRY_RUN="false"
 CATALINA_OPTS=""
 PASSWORD="$(cat /dev/random | tr -dc '[:alnum:]' | fold -w 10 | head -n 1; echo '')"
 RAND_PWD="true"
+NAMESPACE="default"
 
 # Parse options
 while getopts ":shd:n:e:p:w:" opt; do
@@ -106,25 +113,15 @@ var[AGROLD_NAME]="${env[AGROLD_NAME]:=agrold}"
 var[AGROLD_DESCRIPTION]="${env[AGROLD_DESCRIPTION]:=}"
 var[AGROLD_BASEURL]="${env[AGROLD_BASEURL]:=http://vmagrold-proto}"
 var[AGROLD_SPARQL_ENDPOINT]="${env[AGROLD_SPARQL_ENDPOINT]:=http://sparql.southgreen.fr}"
-var[AGROLD_DB_CONNECTION_URL]="${env[AGROLD_DB_CONNECTION_URL]}"
-var[AGROLD_DB_USERNAME]="${env[AGROLD_DB_USERNAME]}"
-var[AGROLD_DB_PASSWORD]="${env[AGROLD_DB_PASSWORD]}"
 
 for v in "${!var[@]}"; do
     var["$v"]="${opt[$v]:=${var[$v]}}"
-    if [ "$v" = "AGROLD_DB_CONNECTION_URL" ] || 
-       [ "$v" = "AGROLD_DB_USERNAME" ] || 
-       [ "$v" = "AGROLD_DB_PASSWORD" ]; then
-        if [ -z "${var[$v]}" ]; then
-            echo "${red}Missing $v$normal"
-            exit 1
-        fi
-    fi
 
     CATALINA_OPTS="$CATALINA_OPTS -D$(echo "$v" | awk -F '=' '/^AGROLD/ { lwr=tolower($1); sub(/_/, ".", lwr); print lwr }')=\"${var[$v]}\""
 done
+CATALINA_OPTS="$CATALINA_OPTS -Dagrold.db_connection_url='mysql.$NAMESPACE.svc.cluster.local/agrolddb?useSSL=false' -Dagrold.db_username='app' -Dagrold.db_password='password'"
 
-HELM_OPTS="$HELM_OPTS --set 'catalinaOpts=$CATALINA_OPTS'"
+HELM_OPTS="$HELM_OPTS --set 'catalinaOpts=$CATALINA_OPTS' --set 'auth.password=${var[AGROLD_DB_PASSWORD]}' --set 'auth.user=${var[AGROLD_DB_USERNAME]}'"
 
 if [[ -n $(command -v kubectl) ]] && [[ -n $(command -v helm) ]]; then
     if [ "$DRY_RUN" = "true" ]; then
@@ -148,12 +145,12 @@ if [[ -n $(command -v kubectl) ]] && [[ -n $(command -v helm) ]]; then
     done
 
     if [ "$DRY_RUN" = "true" ]; then
-        echo "${yellow}> kubectl wait deployment -n ${NAMESPACE:=default} tomcat --for condition=Available=True --timeout=90s"
-        echo "> POD=\$(kubectl get pods -n ${NAMESPACE:=default} | grep tomcat | awk '{print \$1}' | head -n 1\)"
+        echo "${yellow}> kubectl wait deployment -n $NAMESPACE tomcat --for condition=Available=True --timeout=90s"
+        echo "> POD=\$(kubectl get pods -n $NAMESPACE | grep tomcat | awk '{print \$1}' | head -n 1\)"
     else
         echo "${yellow}Waiting for tomcat deployment to be ready${normal}"
-        kubectl wait deployment -n "${NAMESPACE:=default}" tomcat --for condition=Available=True --timeout=90s
-        POD="$(kubectl get pods -n ${NAMESPACE:=default} | grep tomcat | awk '{print $1}' | head -n 1)"
+        kubectl wait deployment -n "$NAMESPACE" tomcat --for condition=Available=True --timeout=90s
+        POD="$(kubectl get pods -n $NAMESPACE | grep tomcat | awk '{print $1}' | head -n 1)"
     fi
 
 
@@ -161,20 +158,20 @@ if [[ -n $(command -v kubectl) ]] && [[ -n $(command -v helm) ]]; then
         echo "${yellow}Installing war file(s)${normal}"
         if [ "$DRY_RUN" = "true" ]; then
         # Since the persistence storage volume is shared we will just copy the war file to a random pod
-            echo "> kubectl cp $WAR_PATH ${NAMESPACE:=default}/tomcat-abcdefghij-klmno:/bitnami/tomcat/webapps/aldp.war${normal}"
+            echo "> kubectl cp $WAR_PATH $NAMESPACE/tomcat-abcdefghij-klmno:/bitnami/tomcat/webapps/aldp.war${normal}"
         else
-            kubectl cp "$WAR_PATH" "${NAMESPACE:=default}/$POD:/bitnami/tomcat/webapps/aldp.war"
+            kubectl cp "$WAR_PATH" "$NAMESPACE/$POD:/bitnami/tomcat/webapps/aldp.war"
             echo "${green}War file(s) installed!${normal}"
         fi
     fi
 
     echo "${yellow}Appling context.xml${normal}"
     if [ "$DRY_RUN" = "true" ]; then
-        echo "${yellow}> kubectl cp ./context.xml ${NAMESPACE:=default}/tomcat-abcdefghij-klmno:/bitnami/tomcat/webapps/manager/META-INF/context.xml${normal}"
+        echo "${yellow}> kubectl cp ./context.xml $NAMESPACE/tomcat-abcdefghij-klmno:/bitnami/tomcat/webapps/manager/META-INF/context.xml${normal}"
         echo "${yellow}Restart deployment tomcat${normal}"
         echo "${yellow}> kubectl rollout restart deployment your_deployment_name${normal}"
     else
-        kubectl cp ./context.xml "${NAMESPACE:=default}/$POD:/bitnami/tomcat/webapps/manager/META-INF/context.xml"
+        kubectl cp ./context.xml "$NAMESPACE/$POD:/bitnami/tomcat/webapps/manager/META-INF/context.xml"
         echo "${yellow}Restart deployment tomcat${normal}"
         kubectl rollout restart deployment tomcat
     fi
