@@ -3,16 +3,18 @@
 set -e
 
 normal=$(tput sgr0)
-yellow=$(tput setaf 3)
 red=$(tput setaf 1)
 green=$(tput setaf 2)
+yellow=$(tput setaf 3)
+blue=$(tput setaf 4)
 
 # returns 0 if answered yes, 1 if answered no
 # $1: question
 function ask_closed_question {
     while true; do
-        read -rp "$1 [y/n] " yn
+        read -rp "$1 [Y/n] " yn
         case $yn in
+            "" ) echo 0; return 0;; #if no input it returns 0
             [Yy]* ) echo 0; return 0;;
             [Nn]* ) echo 1; return 1;;
             * ) ;;
@@ -32,6 +34,13 @@ function is_RW_by_group_and_others {
 }
 
 FIND_YAML_CMD="find kubeconfig/ -regextype egrep -type f -regex '.*\.ya?ml'"
+
+if [ -z $(command -v terraform) ]; then
+    if [[ "$(ask_closed_question "Terraform is not installed. Continue?\
+${blue}ℹ️ You can install it at https://developer.hashicorp.com/terraform/downloads${normal}")" -eq "1" ]]; then
+        exit 1
+    fi
+fi
 
 if [ -z $(command -v kubectl) ]; then
     if [[ $(ask_closed_question "kubectl not found. Install?") -eq "0" ]]; then
@@ -61,8 +70,8 @@ if [ -d ./kubeconfig ]; then
     if [ $nb_files -eq 0 ]; then
         echo "${red}No kubeconfig found in this directory.$normal"
     elif [ $nb_files -eq 1 ]; then
-        export KUBECONFIG=$(pwd)/kubeconfig/$(eval $FIND_YAML_CMD)
-        echo "${green}Kubectl and Helm are ready to go!$normal"
+        export KUBECONFIG=$(pwd)/$(eval $FIND_YAML_CMD)
+        echo "${green}🚀 You are good to go!$normal"
     else
         echo "Multiple kube config files found in this directory. Please select one:"
         select file in $(eval $FIND_YAML_CMD); do
@@ -70,15 +79,16 @@ if [ -d ./kubeconfig ]; then
             break
         done
 
-        if [ $(ask_closed_question "Do you want to move this file to ~/.kube/config? This Will make it available to all shells.") -eq "0" ]; then
+        if [ $(ask_closed_question "Do you want to move this file to ~/.kube/config? This will make it available to all shells.") -eq "0" ]; then
             mkdir -p ~/.kube
             cp -i $KUBECONFIG ~/.kube/config
         fi
-        echo "${green}Kubectl and Helm are ready to go!$normal"
+        echo "${green}🚀 You are good to go!$normal"
     fi
-    if [[ $(is_RW_by_group_and_others $KUBECONFIG) -eq "0" ]]; then
+    if [[ "$(is_RW_by_group_and_others $KUBECONFIG)" -eq "0" ]]; then
         echo "${yellow}Note: For security reasons, make sure your kubeconfig files aren't readable and writable by others and group.$normal"
     fi
+    export TF_VAR_KUBECONFIG=$KUBECONFIG
 
 else 
     mkdir kubeconfig -m 700
