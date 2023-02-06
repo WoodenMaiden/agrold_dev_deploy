@@ -6,7 +6,7 @@ variable "KUBECONFIG" {
 variable "basedomain" {
   description = "Domain used for FQDN (https://kinsta.com/wp-content/uploads/2022/07/structure-of-url.png)"
   type        = string
-  default     = "localhost"
+  default     = "127.0.0.1.sslip.io"
 }
 
 
@@ -19,7 +19,7 @@ variable "namespace" {
 variable "sparql_endpoint" {
   description = "SPARQL endpoint used by rfr"
   type        = string
-  default     = "http://sparql.southgreen.fr"
+  default     = "http://127.0.0.1.sslip.io"
 }
 
 variable "tomcat_admin_password" {
@@ -49,7 +49,7 @@ variable "AGROLD_DESCRIPTION" {
 variable "AGROLD_BASEURL" {
   description = "App's base URL"
   type        = string
-  default     = "http://localhost/"
+  default     = "http://127.0.0.1.sslip.io/"
 }
 
 variable "AGROLD_SPARQL_ENDPOINT" {
