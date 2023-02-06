@@ -17,9 +17,12 @@ First get a kube config file and keep his location in mind for the next step.
 k3d kubeconfig write mycluster -o /somepath/filename.yaml
 ```
 
-Then write a ``.tfvars`` file and fill it with the variables in ``./terraform/local/variables.tf`` 
+Then write the ``terraform.tfvars`` file and fill it with the variables you wish to change in ``./terraform/local/variables.tf`` 
 
-> 💡 Otherwise you can generate said file with the command ``terraform-docs tfvars hcl ./terraform/local/variables.tf > ./terraform/local/myvars.tfvars``
+> ‼️ The following variables are mandatory:
+> - KUBECONFIG (path to config file you got earlier) 
+
+> 💡 Otherwise you can generate said file with the command ``terraform-docs tfvars hcl ./terraform/local/variables.tf > ./terraform/local/terraform.tfvars``
 
 # Deploy
 
