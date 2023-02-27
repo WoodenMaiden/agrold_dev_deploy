@@ -27,10 +27,12 @@ spec:
       serviceAccountName: {{ include "sparql.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.initdb.enabled }}
       volumes: 
-        - name: initdb
+        - name: {{ .Values.initdb.data.name }}
           configMap:
             name: dataset
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -45,9 +47,11 @@ spec:
             httpGet:
               path: /sparql
               port: http
+          {{- if .Values.initdb.enabled }}
           volumeMounts:
-            - name: initdb
+            - name: {{ .Values.initdb.data.name }}
               mountPath: /initdb.d
+          {{- end }}
           readinessProbe:
             httpGet:
               path: /sparql

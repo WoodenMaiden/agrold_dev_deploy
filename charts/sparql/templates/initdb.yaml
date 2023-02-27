@@ -1,0 +1,8 @@
+{{- if .Values.initdb.enabled }}
+apiVersion: v1
+kind: {{ .Values.initdb.data.kind }}
+metadata:
+  name: {{ .Values.initdb.data.name }}
+data:
+  todo: someday...
+{{- end }}

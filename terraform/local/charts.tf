@@ -6,8 +6,8 @@ resource "helm_release" "rfrfrontend" {
   name      = "rfrfrontend"
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
-  chart  = "../../front"
-  values = ["${file("../../front/values.yaml")}"]
+  chart  = "../../charts/rf"
+  values = ["${file("../../charts/rf/values.yaml")}"]
 
   set {
     name  = "apiUrl"
@@ -28,8 +28,8 @@ resource "helm_release" "rfrapi" {
   name      = "rfrapi"
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
-  chart  = "../../api"
-  values = ["${file("../../api/values.yaml")}"]
+  chart  = "../../charts/rfapi"
+  values = ["${file("../../charts/rfapi/values.yaml")}"]
 
   set {
     name  = "args"
@@ -56,8 +56,8 @@ resource "helm_release" "tomcat" {
   name      = "tomcatagrold"
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
-  chart  = "../../tomcat"
-  values = ["${file("../../tomcat/values.yaml")}"]
+  chart  = "../../charts/tomcat"
+  values = ["${file("../../charts/tomcat/values.yaml")}"]
 
   set {
     name  = "ingress.hostname"
@@ -82,9 +82,17 @@ EOL
 }
 
 
-# resource "helm_release" "sparql" {
+resource "helm_release" "sparql" {
+  name      = "sparql"
+  namespace = kubernetes_namespace.namespace.metadata[0].name
 
-# }
+  chart  = "../../charts/sparql"
+  values = ["${file("../../charts/sparql/values.yaml")}"]
+
+  depends_on = [
+    kubernetes_namespace.namespace
+  ]
+}
 
 
 resource "helm_release" "db" {
@@ -92,8 +100,8 @@ resource "helm_release" "db" {
   name      = "databaseagrold"
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
-  chart  = "../../mysql"
-  values = ["${file("../../mysql/values.yaml")}"]
+  chart  = "../../charts/agroldmysql"
+  values = ["${file("../../charts/agroldmysql/values.yaml")}"]
 
   set {
     name  = "auth.username"
@@ -118,8 +126,8 @@ resource "helm_release" "kubeview" {
   name      = "kubeview"
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
-  chart  = "../../kubeview"
-  values = ["${file("../../kubeview/values.yaml")}"]
+  chart  = "../../charts/kubeview"
+  values = ["${file("../../charts/kubeview/values.yaml")}"]
 
   set {
     name  = "ingress.hosts[0].domain"

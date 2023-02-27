@@ -56,7 +56,7 @@ variable "AGROLD_BASEURL" {
 variable "AGROLD_SPARQL_ENDPOINT" {
   description = "SPARQL endpoint used by AgroLD"
   type        = string
-  default     = "http://sparql.southgreen.fr"
+  default     = "http://sparql.default.svc.cluster.local/sparql"
 }
 
 variable "AGROLD_DB_USERNAME" {

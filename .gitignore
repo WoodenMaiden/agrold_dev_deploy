@@ -34,8 +34,5 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-kubectl
-get-helm.sh
-
 *.env
 *.env.*
