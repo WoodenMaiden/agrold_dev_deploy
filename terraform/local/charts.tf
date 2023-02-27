@@ -87,9 +87,28 @@ EOL
 # }
 
 
-# resource "helm_release" "db" {
+resource "helm_release" "db" {
 
-# }
+  name      = "databaseagrold"
+  namespace = kubernetes_namespace.namespace.metadata[0].name
+
+  chart  = "../../mysql"
+  values = ["${file("../../mysql/values.yaml")}"]
+
+  set {
+    name  = "auth.username"
+    value = var.AGROLD_DB_USERNAME
+  }
+
+  set {
+    name  = "auth.password"
+    value = var.AGROLD_DB_PASSWORD
+  }
+
+  depends_on = [
+    kubernetes_namespace.namespace
+  ]
+}
 
 # ============= #
 #      Misc     #

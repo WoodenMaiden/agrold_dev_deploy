@@ -18,9 +18,9 @@ k3d kubeconfig write mycluster -o /somepath/filename.yaml
 
 Feel free to set it's path as ``KUBECONFIG`` env variable so you can use kubectl. 
 
-Then write the ``terraform.tfvars`` file and fill it with the variables you wish to change in ``./terraform/local/variables.tf`` 
+Then create the ``terraform.tfvars`` file and fill it with the variables you wish to change in ``./terraform/local/variables.tf`` 
 
-> ‼️ The following variables are mandatory:
+> ‼️ The following tf variables are mandatory:
 > - KUBECONFIG (path to config file you got earlier) 
 
 > 💡 Otherwise you can generate said file with the command ``terraform-docs tfvars hcl ./terraform/local/variables.tf > ./terraform/local/terraform.tfvars``
@@ -48,7 +48,7 @@ Here are the domain redirection provided by the ingress:
 * **api.\<basedomain\>**: Relfinder Reformed's api (might be changed)
 * **viz.\<basedomain\>**: Kubeview to view the kubernetes cluster
 
-By default the _127.0.0.1.sslip.io_ base domain is used. The DNS service [sslip.io](https://sslip.io) returns the ip adress you prepend to it, its useful to avoid having to configure a local dns server for development. 
+By default, the _127.0.0.1.sslip.io_ base domain is used. The DNS service [sslip.io](https://sslip.io) returns the ip adress you prepend to it, its useful to avoid having to configure a local dns server for development. 
 
 # Undeploy
 
