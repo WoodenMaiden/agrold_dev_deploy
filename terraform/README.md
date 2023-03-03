@@ -45,9 +45,17 @@ terraform destroy #to put down your infrastucture
 
 ## Modules
 
-Create a module for each environment you want to support (local, production etc..)
+### Existing modules
 
-Here is the architecture of a module: 
+- Local: for local environment, minimal set up including adapted variables and charts for agroLD, RFR, a database for AGROLD users and a sparql database. 
+- Dev: for dev environment (if you want to put the app on a separated machine). Including all the above + Prometheus and Grafana for monitoring.
+- Production: for production environment. Including all the above + open telemetry utilities and integration pipelines.
+
+### Create a module
+
+Each module refers to an environment (local, production etc..)
+
+Here is our architecture of a module: 
 ```bash
 myenv
 |- charts.tf # Here goes Helm charts

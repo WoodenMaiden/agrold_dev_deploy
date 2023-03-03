@@ -22,7 +22,7 @@ Then create the ``terraform.tfvars`` file and fill it with the variables you wis
 > ‼️ The following tf variables are mandatory:
 > - KUBECONFIG (path to config file you got earlier) 
 
-> 💡 Otherwise you can generate said file with the command ``terraform-docs tfvars hcl ./terraform/local/variables.tf > ./terraform/local/terraform.tfvars``
+> 💡 Otherwise you can generate said file with the command ``terraform-docs tfvars hcl ./terraform/local > ./terraform/local/terraform.tfvars``
 
 # Deploy
 
