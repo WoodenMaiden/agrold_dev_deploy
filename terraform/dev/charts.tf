@@ -15,8 +15,8 @@ resource "helm_release" "rfrfrontend" {
   }
 
   set {
-    name  = "ingress.hosts[0].domain"
-    value = var.basedomain
+    name  = "ingress.hosts[0].host"
+    value = "${join(".", ["rf", var.basedomain])}"
   }
 
   depends_on = [
@@ -37,8 +37,8 @@ resource "helm_release" "rfrapi" {
   }
 
   set {
-    name  = "ingress.hosts[0].domain"
-    value = var.basedomain
+    name  = "ingress.hosts[0].host"
+    value = "${join(".", ["api", var.basedomain])}"
   }
 
   depends_on = [
@@ -163,8 +163,8 @@ resource "helm_release" "kubeview" {
   values = ["${file("../../charts/kubeview/values.yaml")}"]
 
   set {
-    name  = "ingress.hosts[0].domain"
-    value = var.basedomain
+    name  = "ingress.hosts[0].host"
+    value = "${join(".", ["viz", var.basedomain])}"
   }
 
   depends_on = [

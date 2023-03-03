@@ -22,8 +22,7 @@ ingress:
   enabled: true
   annotations: {}
   hosts:
-    - host: viz
-      domain: vmagrold-proto #Someting to append to .host
+    - host: viz.127.0.0.1.sslip.io
   tls: []
   className: ""
 
