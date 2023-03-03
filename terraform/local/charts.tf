@@ -31,7 +31,7 @@ resource "helm_release" "rfrapi" {
   chart  = "../../charts/rfapi"
   values = ["${file("../../charts/rfapi/values.yaml")}"]
 
-  set {
+  set_sensitive {
     name  = "args"
     value = "{-p, 80, --loglevel, DEBUG}"
   }
@@ -69,7 +69,7 @@ resource "helm_release" "tomcat" {
     value = var.AGROLD_SPARQL_ENDPOINT
   }
 
-  set {
+  set_sensitive {
     name  = "catalinaOpts"
     value = <<EOL
 -Dagrold.db_connection_url='mysql.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local/agrolddb?useSSL=false' -Dagrold.db_username='${var.AGROLD_DB_USERNAME}' -Dagrold.db_password='${var.AGROLD_DB_PASSWORD}' -Dagrold.name='${var.AGROLD_NAME}' -Dagrold.description='${var.AGROLD_DESCRIPTION}' -Dagrold.baseurl='${var.AGROLD_BASEURL}' -Dagrold.sparql_endpoint='${var.AGROLD_SPARQL_ENDPOINT}'
@@ -103,12 +103,12 @@ resource "helm_release" "db" {
   chart  = "../../charts/agroldmysql"
   values = ["${file("../../charts/agroldmysql/values.yaml")}"]
 
-  set {
+  set_sensitive {
     name  = "auth.username"
     value = var.AGROLD_DB_USERNAME
   }
 
-  set {
+  set_sensitive {
     name  = "auth.password"
     value = var.AGROLD_DB_PASSWORD
   }

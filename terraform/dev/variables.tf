@@ -70,3 +70,9 @@ variable "AGROLD_DB_PASSWORD" {
   type        = string
   default     = "password"
 }
+
+variable "grafana_admin_password" {
+  description = "grafana password"
+  type        = string
+  default     = "password"
+}

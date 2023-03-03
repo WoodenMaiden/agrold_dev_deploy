@@ -58,6 +58,11 @@ Each module refers to an environment (local, production etc..)
 Here is our architecture of a module: 
 ```bash
 myenv
+|- conf_files/ # Here goes all the configuration files you might need
+|  |           # the file() function of terraform will read them and 
+|  |           # inject them into your architecture as a string
+|  |- <chart>/
+|     |- <file>
 |- charts.tf # Here goes Helm charts
 |- namespaces.tf # Here goes whatever namespace you might be using (eg, kubernetes)
 |- providers.tf # Providers configuration
@@ -65,12 +70,11 @@ myenv
 |- variables.tf # Variables declaration
 ```
 
-## "Okay nice but what about variables?"
+## "Okay nice but..."
 > I want to add something to the conf, where do I put it? Directly in helm charts? in `variables.tf` ? 
 
 The rule is simple: 
 
->If this is something that is confidential (password), or something that might change (IP, hostname...), put it in `variables.tf` and use the [`set`](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release#set) argument of the helm provider to override chart's value.
->Else just write in in the chart directly
+> If this is something that is confidential (password), or something that might change a lot (IP, hostname...), put it in `variables.tf` and use the [`set_sensitive`](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release#set_sensitive) argument of the helm provider to override chart's value. If it only changes depending on your environment (for example the charts deployed), just `set` and change your ressources. Else just write in in the chart directly
 
 Of course if there is any problem feel free to contact me at yann.pomie@ird.fr
