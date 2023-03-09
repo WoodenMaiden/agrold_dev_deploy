@@ -50,8 +50,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: sparql
-      domain: vmagrold-proto # Someting to append to .host
+    - host: sparql.127.0.0.1.sslip.io
       paths:
         - path: /
           pathType: ImplementationSpecific

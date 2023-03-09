@@ -10,7 +10,7 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
-apiUrl: "http://api.vmagrold-proto/"
+RFRApiUrl: "http://api.127.0.0.1.sslip.io/"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -52,8 +52,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: "rf"
-      domain: vmagrold-proto #Someting to append to .host
+    - host: "rf.127.0.0.1.sslip.io"
       paths:
         - path: /
           pathType: ImplementationSpecific
