@@ -16,7 +16,12 @@ resource "helm_release" "rf" {
 
   set {
     name  = "image.tag" 
-    value = "latest"
+    value = var.image_tags.rf
+  }
+
+  set {
+    name  = "image.pullPolicy" 
+    value = "Always"
   }
 
   set {
@@ -53,8 +58,14 @@ resource "helm_release" "rfapi" {
 
   set {
     name  = "image.tag" 
-    value = "latest"
+    value = var.image_tags.rfapi
   }
+
+  set {
+    name  = "image.pullPolicy" 
+    value = "Always"
+  }
+
 
   set {
     name  = "sparqlAddress"
