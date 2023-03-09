@@ -17,9 +17,9 @@ variable "namespace" {
 }
 
 variable "sparql_endpoint" {
-  description = "SPARQL endpoint used by rfr"
+  description = "SPARQL endpoint used by rfr api"
   type        = string
-  default     = "http://127.0.0.1.sslip.io"
+  default     = "http://sparql.agrold.svc.cluster.local/sparql"
 }
 
 variable "tomcat_admin_password" {
@@ -56,7 +56,7 @@ variable "AGROLD_BASEURL" {
 variable "AGROLD_SPARQL_ENDPOINT" {
   description = "SPARQL endpoint used by AgroLD"
   type        = string
-  default     = "http://sparql.default.svc.cluster.local/sparql"
+  default     = "http://sparql.agrold.svc.cluster.local/sparql"
 }
 
 variable "AGROLD_DB_USERNAME" {

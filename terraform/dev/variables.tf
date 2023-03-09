@@ -17,7 +17,7 @@ variable "namespace" {
 }
 
 variable "sparql_endpoint" {
-  description = "SPARQL endpoint used by rfr"
+  description = "SPARQL endpoint used by rfr api"
   type        = string
   default     = "http://sparql.agrolddev.svc.cluster.local/sparql"
 }

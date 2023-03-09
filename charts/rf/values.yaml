@@ -10,7 +10,7 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
-apiUrl: "http://api.vmagrold-proto/"
+RFRApiUrl: "http://api.127.0.0.1.sslip.io/"
 
 imagePullSecrets: []
 nameOverride: ""

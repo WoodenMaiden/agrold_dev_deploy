@@ -11,7 +11,7 @@ resource "helm_release" "rfrfrontend" {
 
   set {
     name  = "apiUrl"
-    value = var.sparql_endpoint
+    value = "${join(".", ["api", var.basedomain])}"
   }
 
   set {
@@ -34,6 +34,11 @@ resource "helm_release" "rfrapi" {
   set_sensitive {
     name  = "args"
     value = "{-p, 80, --loglevel, DEBUG}"
+  }
+
+  set {
+    name  = "sparqlAddress"
+    value = var.sparql_endpoint
   }
 
   set {

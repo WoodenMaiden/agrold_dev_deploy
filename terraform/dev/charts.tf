@@ -10,8 +10,18 @@ resource "helm_release" "rfrfrontend" {
   values = ["${file("../../charts/rf/values.yaml")}"]
 
   set {
-    name  = "apiUrl"
-    value = var.sparql_endpoint
+    name  = "image.repository" 
+    value = "10.9.2.21:8080/rfr/relfinderreformedfront"
+  }
+
+  set {
+    name  = "image.tag" 
+    value = "latest"
+  }
+
+  set {
+    name  = "RFRApiUrl"
+    value = "http://${join(".", ["api", var.basedomain])}"
   }
 
   set {
@@ -35,6 +45,22 @@ resource "helm_release" "rfrapi" {
     name  = "args"
     value = "{-p, 80, --loglevel, DEBUG}"
   }
+
+  set {
+    name  = "image.repository" 
+    value = "10.9.2.21:8080/rfr/relfinderreformedapi"
+  }
+
+  set {
+    name  = "image.tag" 
+    value = "latest"
+  }
+
+  set {
+    name  = "sparqlAddress"
+    value = var.sparql_endpoint
+  }
+
 
   set {
     name  = "ingress.hosts[0].host"
