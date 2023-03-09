@@ -63,3 +63,13 @@ variable "grafana_admin_password" {
   type        = string
   default     = "password"
 }
+
+variable "image_tags" {
+  description = "Tags of RFR/AgroLD images"
+  type        = map
+  default     = {
+    agrold = "latest"
+    rf     = "latest"
+    rfapi  = "latest"
+  }
+}
