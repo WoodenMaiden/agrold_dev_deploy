@@ -2,21 +2,21 @@
 #     RFR      #
 # ============ #
 
-resource "helm_release" "rfrfrontend" {
-  name      = "rfrfrontend"
+resource "helm_release" "rf" {
+  name      = "rf"
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   chart  = "../../charts/rf"
   values = ["${file("../../charts/rf/values.yaml")}"]
 
   set {
-    name  = "apiUrl"
-    value = "${join(".", ["api", var.basedomain])}"
+    name  = "RFRApiUrl"
+    value = "http://${join(".", ["rfapi", var.base_domain])}"
   }
 
   set {
     name  = "ingress.hosts[0].host"
-    value = "${join(".", ["rf", var.basedomain])}"
+    value = "${join(".", ["rf", var.base_domain])}"
   }
 
   depends_on = [
@@ -24,8 +24,8 @@ resource "helm_release" "rfrfrontend" {
   ]
 }
 
-resource "helm_release" "rfrapi" {
-  name      = "rfrapi"
+resource "helm_release" "rfapi" {
+  name      = "rfapi"
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   chart  = "../../charts/rfapi"
@@ -43,7 +43,7 @@ resource "helm_release" "rfrapi" {
 
   set {
     name  = "ingress.hosts[0].host"
-    value = "${join(".", ["api", var.basedomain])}"
+    value = "${join(".", ["rfapi", var.base_domain])}"
   }
 
   depends_on = [
@@ -66,18 +66,18 @@ resource "helm_release" "tomcat" {
 
   set {
     name  = "ingress.hostname"
-    value = var.basedomain
+    value = var.base_domain
   }
 
   set {
     name  = "sparqlAddress"
-    value = var.AGROLD_SPARQL_ENDPOINT
+    value = var.sparql_endpoint
   }
 
   set_sensitive {
     name  = "catalinaOpts"
     value = <<EOL
--Dagrold.db_connection_url='mysql.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local/agrolddb?useSSL=false' -Dagrold.db_username='${var.AGROLD_DB_USERNAME}' -Dagrold.db_password='${var.AGROLD_DB_PASSWORD}' -Dagrold.name='${var.AGROLD_NAME}' -Dagrold.description='${var.AGROLD_DESCRIPTION}' -Dagrold.baseurl='${var.AGROLD_BASEURL}' -Dagrold.sparql_endpoint='${var.AGROLD_SPARQL_ENDPOINT}'
+-Dagrold.db_connection_url='mysql.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local/agrolddb?useSSL=false' -Dagrold.db_username='${var.agrold_db_username}' -Dagrold.db_password='${var.agrold_db_password}' -Dagrold.name='${var.agrold_name}' -Dagrold.description='${var.agrold_description}' -Dagrold.baseurl='http://${var.base_domain}/' -Dagrold.sparql_endpoint='${var.sparql_endpoint}'
 EOL
   }
 
@@ -110,12 +110,12 @@ resource "helm_release" "db" {
 
   set_sensitive {
     name  = "auth.username"
-    value = var.AGROLD_DB_USERNAME
+    value = var.agrold_db_username
   }
 
   set_sensitive {
     name  = "auth.password"
-    value = var.AGROLD_DB_PASSWORD
+    value = var.agrold_db_password
   }
 
   depends_on = [
@@ -136,7 +136,7 @@ resource "helm_release" "kubeview" {
 
   set {
     name  = "ingress.hosts[0].host"
-    value = "${join(".", ["viz", var.basedomain])}"
+    value = "${join(".", ["viz", var.base_domain])}"
   }
 
   depends_on = [

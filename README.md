@@ -40,14 +40,7 @@ AgroLD uses DNS redirection meaning that your request will be redirected by the 
 
 ![K8S ingresses](https://miro.medium.com/max/1400/1*KIVa4hUVZxg-8Ncabo8pdg.png)
 
-Here are the domain redirection provided by the ingress: 
-
-* **\<basedomain\>**: AgroLD
-* **rf.\<basedomain\>**: Relfinder Reformed's frontend
-* **api.\<basedomain\>**: Relfinder Reformed's api (might be changed)
-* **viz.\<basedomain\>**: Kubeview to view the kubernetes cluster
-
-By default, the _127.0.0.1.sslip.io_ base domain is used. The DNS service [sslip.io](https://sslip.io) returns the ip adress you prepend to it, its useful to avoid having to configure a local dns server for development. 
+By default, the _127.0.0.1.sslip.io_ base domain is used. The DNS service [sslip.io](https://sslip.io) returns the ip adress you prepend to it, its useful to avoid having to configure a local dns server for development. Domain redirections will be showed in each terraform modules.
 
 # Undeploy
 
