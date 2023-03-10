@@ -73,3 +73,9 @@ variable "image_tags" {
     rfapi  = "latest"
   }
 }
+
+variable "label_store_password" {
+  description = "Password of label-store"
+  type        = string
+  default     = "password"
+}
