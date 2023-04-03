@@ -48,7 +48,7 @@ resource "helm_release" "rfapi" {
 
   set_sensitive {
     name  = "args"
-    value = "{-p, 80, --loglevel, DEBUG}"
+    value = "{-p, 80,--loglevel,DEBUG}"
   }
 
   set {
@@ -89,8 +89,7 @@ resource "helm_release" "rfapi" {
   }
 
   depends_on = [
-    kubernetes_namespace.namespace,
-    helm_release.rf-label-store
+    kubernetes_namespace.namespace
   ]
 }
 
@@ -163,6 +162,16 @@ resource "helm_release" "sparql" {
 
   chart  = "../../charts/sparql"
   values = ["${file("../../charts/sparql/values.yaml")}"]
+
+  set {
+    name  = "ingress.enabled"
+    value = true
+  }
+
+  set {
+    name  = "ingress.hosts[0].host"
+    value = "${join(".", ["sparql", var.base_domain])}"
+  }
 
   depends_on = [
     kubernetes_namespace.namespace
