@@ -29,9 +29,9 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- if .Values.initdb.enabled }}
       volumes: 
-        - name: {{ .Values.initdb.data.name }}
+        - name: {{ .Values.initdb.name }}
           configMap:
-            name: dataset
+            name: {{ .Values.initdb.name }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -49,7 +49,7 @@ spec:
               port: http
           {{- if .Values.initdb.enabled }}
           volumeMounts:
-            - name: {{ .Values.initdb.data.name }}
+            - name: {{ .Values.initdb.name }}
               mountPath: /initdb.d
           {{- end }}
           readinessProbe:

@@ -1,8 +1,13 @@
 {{- if .Values.initdb.enabled }}
 apiVersion: v1
-kind: {{ .Values.initdb.data.kind }}
+kind: {{ .Values.initdb.kind }}
 metadata:
-  name: {{ .Values.initdb.data.name }}
+  name: {{ .Values.initdb.name }}
 data:
-  todo: someday...
+  # The issue is that I have not found a way to
+  # make it work w/ both TF and manually setting
+  # because of yamlencode and toYaml
+  {{- if .Values.initdb.data }}
+  {{ .Values.initdb.data | nindent 2 }}
+  {{- end }}
 {{- end }}

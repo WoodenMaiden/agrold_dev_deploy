@@ -7,7 +7,7 @@ resource "helm_release" "rf" {
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   chart  = "../../charts/rf"
-  values = ["${file("../../charts/rf/values.yaml")}"]
+  values = [file("../../charts/rf/values.yaml")]
 
   set {
     name  = "image.repository" 
@@ -31,7 +31,7 @@ resource "helm_release" "rf" {
 
   set {
     name  = "ingress.hosts[0].host"
-    value = "${join(".", ["rf", var.base_domain])}"
+    value = join(".", ["rf", var.base_domain])
   }
 
   depends_on = [
@@ -44,7 +44,7 @@ resource "helm_release" "rfapi" {
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   chart  = "../../charts/rfapi"
-  values = ["${file("../../charts/rfapi/values.yaml")}"]
+  values = [file("../../charts/rfapi/values.yaml")]
 
   set_sensitive {
     name  = "args"
@@ -75,7 +75,7 @@ resource "helm_release" "rfapi" {
 
   set {
     name  = "ingress.hosts[0].host"
-    value = "${join(".", ["rfapi", var.base_domain])}"
+    value = join(".", ["rfapi", var.base_domain])
   }
 
   depends_on = [
@@ -94,7 +94,7 @@ resource "helm_release" "tomcat" {
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   chart  = "../../charts/tomcat"
-  values = ["${file("../../charts/tomcat/values.yaml")}"]
+  values = [file("../../charts/tomcat/values.yaml")]
 
   set {
     name  = "ingress.hostname"
@@ -124,7 +124,20 @@ resource "helm_release" "sparql" {
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   chart  = "../../charts/sparql"
-  values = ["${file("../../charts/sparql/values.yaml")}"]
+  values = [file("../../charts/sparql/values.yaml")]
+
+  set {
+    name  = "initdb.enabled"
+    value = true
+  }
+
+  set {
+    name  = "initdb.data"
+    value = yamlencode({
+      for f in fileset("${path.module}/../../volumes/sparql-initdb", "*"):
+      f => file("${path.module}/../../volumes/sparql-initdb/${f}")
+    })
+  }
 
   depends_on = [
     kubernetes_namespace.namespace
@@ -138,7 +151,7 @@ resource "helm_release" "db" {
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   chart  = "../../charts/agroldmysql"
-  values = ["${file("../../charts/agroldmysql/values.yaml")}"]
+  values = [file("../../charts/agroldmysql/values.yaml")]
 
   set_sensitive {
     name  = "auth.username"
@@ -165,7 +178,7 @@ resource "helm_release" "kube-prometheus-stack" {
   namespace = kubernetes_namespace.metrics.metadata[0].name
 
   chart  = "../../charts/kube-prometheus-stack"
-  values = ["${file("../../charts/kube-prometheus-stack/values.yaml")}"]
+  values = [file("../../charts/kube-prometheus-stack/values.yaml")]
 
 
   set_sensitive {
@@ -180,7 +193,7 @@ resource "helm_release" "kube-prometheus-stack" {
 
   set {
     name  = "grafana.ingress.hosts[0]"
-    value = "${join(".", ["grafana", var.base_domain])}"
+    value = join(".", ["grafana", var.base_domain])
   }
 
 
@@ -198,11 +211,11 @@ resource "helm_release" "kubeview" {
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   chart  = "../../charts/kubeview"
-  values = ["${file("../../charts/kubeview/values.yaml")}"]
+  values = [file("../../charts/kubeview/values.yaml")]
 
   set {
     name  = "ingress.hosts[0].host"
-    value = "${join(".", ["viz", var.base_domain])}"
+    value = join(".", ["viz", var.base_domain])
   }
 
   depends_on = [

@@ -85,10 +85,10 @@ tolerations: []
 
 affinity: {}
 
-# TODO: initdb so we can auto import data 
 # Check this https://docs.openlinksw.com/virtuoso/rdfapi/#rdfapidataimportloadrdfuri
 initdb: 
   enabled: false
+  name: sparql-initdb
+  kind: ConfigMap
   data:
-    name: sparql_initdb_d
-    kind: configMap 
+    {}
