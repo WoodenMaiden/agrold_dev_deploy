@@ -92,3 +92,8 @@ initdb:
   kind: ConfigMap
   data:
     {}
+
+persistence:
+  enabled: true
+  name: triplestore
+  size: 1Gi

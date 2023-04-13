@@ -139,6 +139,16 @@ resource "helm_release" "sparql" {
     })
   }
 
+  set {
+    name  = "persistence.enabled"
+    value = true
+  }
+
+  set {
+    name  = "persistence.size"
+    value = "8Gi"
+  }
+
   depends_on = [
     kubernetes_namespace.namespace
   ]
