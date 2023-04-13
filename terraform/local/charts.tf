@@ -7,7 +7,7 @@ resource "helm_release" "rf" {
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   chart  = "../../charts/rf"
-  values = ["${file("../../charts/rf/values.yaml")}"]
+  values = [file("../../charts/rf/values.yaml")]
 
   set {
     name  = "RFRApiUrl"
@@ -16,7 +16,7 @@ resource "helm_release" "rf" {
 
   set {
     name  = "ingress.hosts[0].host"
-    value = "${join(".", ["rf", var.base_domain])}"
+    value = join(".", ["rf", var.base_domain])
   }
 
   depends_on = [
@@ -29,7 +29,7 @@ resource "helm_release" "rfapi" {
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   chart  = "../../charts/rfapi"
-  values = ["${file("../../charts/rfapi/values.yaml")}"]
+  values = [file("../../charts/rfapi/values.yaml")]
 
   set_sensitive {
     name  = "args"
@@ -43,7 +43,7 @@ resource "helm_release" "rfapi" {
 
   set {
     name  = "ingress.hosts[0].host"
-    value = "${join(".", ["rfapi", var.base_domain])}"
+    value = join(".", ["rfapi", var.base_domain])
   }
 
   depends_on = [
@@ -62,7 +62,7 @@ resource "helm_release" "tomcat" {
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   chart  = "../../charts/tomcat"
-  values = ["${file("../../charts/tomcat/values.yaml")}"]
+  values = [file("../../charts/tomcat/values.yaml")]
 
   set {
     name  = "ingress.hostname"
@@ -86,16 +86,28 @@ EOL
   ]
 }
 
+resource "kubernetes_config_map" "sparql-init" {
+  metadata {
+    name      = "sparql-init"
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+  }
+
+  data = {
+    for f in fileset("${path.module}/../../volumes/sparql-initdb", "*"):
+    f => file("${path.module}/../../volumes/sparql-initdb/${f}")
+  }
+}
 
 resource "helm_release" "sparql" {
   name      = "sparql"
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   chart  = "../../charts/sparql"
-  values = ["${file("../../charts/sparql/values.yaml")}"]
+  values = [file("../../charts/sparql/values.yaml")]
 
   depends_on = [
-    kubernetes_namespace.namespace
+    kubernetes_namespace.namespace,
+    kubernetes_config_map.sparql-init
   ]
 }
 
@@ -106,7 +118,7 @@ resource "helm_release" "db" {
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   chart  = "../../charts/agroldmysql"
-  values = ["${file("../../charts/agroldmysql/values.yaml")}"]
+  values = [file("../../charts/agroldmysql/values.yaml")]
 
   set_sensitive {
     name  = "auth.username"
@@ -132,11 +144,11 @@ resource "helm_release" "kubeview" {
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   chart  = "../../charts/kubeview"
-  values = ["${file("../../charts/kubeview/values.yaml")}"]
+  values = [file("../../charts/kubeview/values.yaml")]
 
   set {
     name  = "ingress.hosts[0].host"
-    value = "${join(".", ["viz", var.base_domain])}"
+    value = join(".", ["viz", var.base_domain])
   }
 
   depends_on = [

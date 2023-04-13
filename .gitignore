@@ -36,3 +36,11 @@ terraform.rc
 
 *.env
 *.env.*
+
+# specific files
+.DS_STORE
+
+# IDE files
+.idea/
+*.iml
+*.vscode/
