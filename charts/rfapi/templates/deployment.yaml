@@ -30,8 +30,18 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           env:
+          {{- if .Values.sparqlAddress }}
           - name: SPARQL_ADDRESS
             value: {{ .Values.sparqlAddress | quote}}
+          {{- end }}
+          {{- if .Values.labelStoreURL }}
+          - name: LABEL_STORE_URL
+            value: {{ .Values.labelStoreURL | quote}}
+          {{- end }}
+          {{- if .Values.labelStoreToken }}
+          - name: LABEL_STORE_TOKEN
+            value: {{ .Values.labelStoreToken | quote}}
+          {{- end }}
           args: 
             {{- toYaml .Values.args | nindent 12 }}
           securityContext:

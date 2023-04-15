@@ -48,7 +48,7 @@ resource "helm_release" "rfapi" {
 
   set_sensitive {
     name  = "args"
-    value = "{-p, 80, --loglevel, DEBUG}"
+    value = "{-p, 80,--loglevel,DEBUG}"
   }
 
   set {
@@ -72,6 +72,16 @@ resource "helm_release" "rfapi" {
     value = var.sparql_endpoint
   }
 
+  # Put these two as k8s secrets 
+  set_sensitive {
+    name  = "labelStoreURL"
+    value = "http://${join(".", ["rf-label-store", kubernetes_namespace.namespace.metadata[0].name, "cluster", "local"])}"
+  }
+
+  set_sensitive {
+    name  = "labelStoreToken"
+    value = var.label_store_password
+  }
 
   set {
     name  = "ingress.hosts[0].host"
@@ -83,6 +93,33 @@ resource "helm_release" "rfapi" {
   ]
 }
 
+
+resource "helm_release" "rf-label-store" {
+  name      = "rf-label-store"
+  namespace = kubernetes_namespace.namespace.metadata[0].name
+
+  chart  = "../../charts/elasticsearch"
+  values = ["${file("../../charts/elasticsearch/values.yaml")}"]
+
+  set_sensitive {
+    name  = "secret.password"
+    value = var.label_store_password
+  }
+
+  set {
+    name  = "replicas"
+    value = 1
+  }
+
+  set {
+    name  = "minimumMasterNodes"
+    value = 1
+  }
+
+  depends_on = [
+    kubernetes_namespace.namespace
+  ]
+}
 
 
 # =============== #
@@ -125,6 +162,16 @@ resource "helm_release" "sparql" {
 
   chart  = "../../charts/sparql"
   values = ["${file("../../charts/sparql/values.yaml")}"]
+
+  set {
+    name  = "ingress.enabled"
+    value = true
+  }
+
+  set {
+    name  = "ingress.hosts[0].host"
+    value = "${join(".", ["sparql", var.base_domain])}"
+  }
 
   depends_on = [
     kubernetes_namespace.namespace

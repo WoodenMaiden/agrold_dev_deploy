@@ -11,6 +11,9 @@ image:
   tag: "latest"
 
 sparqlAddress: "http://sparql.default.svc.cluster.local/sparql"
+labelStoreURL: ""
+labelStoreToken: ""
+
 # Arguments that would be passed to the api
 args:
   - "-p"
