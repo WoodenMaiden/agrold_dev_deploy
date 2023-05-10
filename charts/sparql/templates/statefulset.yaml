@@ -57,7 +57,13 @@ spec:
             - name: {{ .Values.persistence.name }}-pvc
               mountPath: /database
             {{- end }}
+          env:
+            {{ .Values.env | nindent 12 }}
           readinessProbe:
+            httpGet:
+              path: /sparql
+              port: http
+          startupProbe:
             httpGet:
               path: /sparql
               port: http
@@ -83,5 +89,5 @@ spec:
         accessModes: [ "ReadWriteOnce" ] # This might be changed when doing clusters
         resources:
           requests:
-            storage: {{ .Values.persistence.size | default "1Gi"  }}
+            storage: {{ .Values.persistence.size | default "4Gi"  }}
     {{- end }}

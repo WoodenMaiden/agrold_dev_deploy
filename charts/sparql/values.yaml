@@ -43,7 +43,7 @@ service:
   port: 80
 
 ingress:
-  enabled: false
+  enabled: true
   className: ""
   annotations:
     {}
@@ -85,6 +85,15 @@ tolerations: []
 
 affinity: {}
 
+env:
+#  - name: DAV_PASSWORD
+#    value: "password"
+#  - name: ENABLE_TRACE # Set this to enable trace logs
+#    value: yes
+#  - name: IMPORT_THREAD # Set this to enable use several threads to import data
+#    value: 2
+
+
 # Check this https://docs.openlinksw.com/virtuoso/rdfapi/#rdfapidataimportloadrdfuri
 initdb: 
   enabled: false
@@ -96,4 +105,4 @@ initdb:
 persistence:
   enabled: true
   name: triplestore
-  size: 1Gi
+  size: 4Gi
