@@ -1,0 +1,7 @@
+# https://hub.docker.com/r/openlink/virtuoso-opensource-7
+# read the `Updating virtuoso.ini via environment settings` section
+
+VIRT_Database_ErrorLogLevel=7
+VIRT_Database_FileExtend=200
+VIRT_Database_MaxCheckpointRemap=2000
+VIRT_SPARQL_DefaultGraph=http://dev.agrold.southgreen.fr/data

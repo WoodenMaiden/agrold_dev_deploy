@@ -127,6 +127,32 @@ resource "helm_release" "sparql" {
   values = [file("../../charts/sparql/values.yaml")]
 
   set {
+    name  = "ingress.hosts[0].host"
+    value = join(".", ["sparql", var.base_domain])
+  }
+
+  set {
+    name  = "env"
+    value = yamlencode(flatten([
+      [
+        for tuple in regexall(
+          "(.*?)=(.*)",
+          file("${path.module}/conf_files/sparql/virtuoso.ini_env")
+        ): {
+          name  = tuple[0]
+          value = tuple[1]
+        }
+      ],
+      [
+        {
+          name  = "IMPORT_THREAD"
+          value = "2"
+        }
+      ]
+    ]))
+  }
+
+  set {
     name  = "initdb.enabled"
     value = true
   }

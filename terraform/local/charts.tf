@@ -86,18 +86,6 @@ EOL
   ]
 }
 
-resource "kubernetes_config_map" "sparql-init" {
-  metadata {
-    name      = "sparql-init"
-    namespace = kubernetes_namespace.namespace.metadata[0].name
-  }
-
-  data = {
-    for f in fileset("${path.module}/../../volumes/sparql-initdb", "*"):
-    f => file("${path.module}/../../volumes/sparql-initdb/${f}")
-  }
-}
-
 resource "helm_release" "sparql" {
   name      = "sparql"
   namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -105,9 +93,31 @@ resource "helm_release" "sparql" {
   chart  = "../../charts/sparql"
   values = [file("../../charts/sparql/values.yaml")]
 
+  set {
+    name  = "initdb.enabled"
+    value = true
+  }
+
+  set {
+    name  = "initdb.data"
+    value = yamlencode({
+      for f in fileset("${path.module}/../../volumes/sparql-initdb", "*"):
+      f => file("${path.module}/../../volumes/sparql-initdb/${f}")
+    })
+  }
+
+  set {
+    name  = "persistence.enabled"
+    value = true
+  }
+
+  set {
+    name  = "persistence.size"
+    value = "1Gi"
+  }
+
   depends_on = [
-    kubernetes_namespace.namespace,
-    kubernetes_config_map.sparql-init
+    kubernetes_namespace.namespace
   ]
 }
 
