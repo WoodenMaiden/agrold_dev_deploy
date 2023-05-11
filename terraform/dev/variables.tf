@@ -28,12 +28,6 @@ variable "tomcat_admin_password" {
   default     = "password"
 }
 
-## Way too annoying to use a variable for this for auto-deployment
-# For now just deploy manually you war file with tomcat's admin pannel
-# variable "war_path" {
-#     type
-# }
-
 variable "agrold_name" {
   description = "Prefix of agrold main app: http://[base_domain]/[agrold_name]"
   type        = string

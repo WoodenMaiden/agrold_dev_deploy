@@ -96,6 +96,32 @@ resource "helm_release" "tomcat" {
   chart  = "../../charts/tomcat"
   values = [file("../../charts/tomcat/values.yaml")]
 
+
+  set {
+    name  = "image.registry"
+    value = "10.9.2.21:8080"
+  }
+
+  set {
+    name  = "image.repository"
+    value = "agrold"
+  }
+
+  set {
+    name  = "image.tag"
+    value = var.image_tags.agrold
+  }
+
+  set {
+    name  = "image.pullPolicy"
+    value = "Always"
+  }
+
+  set {
+    name  = "tomcatPassword"
+    value = var.tomcat_admin_password
+  }
+
   set {
     name  = "ingress.hostname"
     value = var.base_domain
