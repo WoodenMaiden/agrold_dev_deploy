@@ -66,12 +66,15 @@ resource "helm_release" "rfapi" {
     value = "Always"
   }
 
+  set {
+    name  = "autoscaling.enabled"
+    value = false
+  }
 
   set {
     name  = "sparqlAddress"
     value = var.sparql_endpoint
   }
-
 
   set {
     name  = "ingress.hosts[0].host"
@@ -104,7 +107,7 @@ resource "helm_release" "tomcat" {
 
   set {
     name  = "image.repository"
-    value = "agrold"
+    value = "agrolddev"
   }
 
   set {
