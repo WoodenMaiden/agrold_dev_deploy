@@ -148,66 +148,7 @@ EOL
 }
 
 
-resource "helm_release" "sparql" {
-  name      = "sparql"
-  namespace = kubernetes_namespace.namespace.metadata[0].name
-
-  chart  = "../../charts/sparql"
-  values = [file("../../charts/sparql/values.yaml")]
-
-  set {
-    name  = "ingress.hosts[0].host"
-    value = join(".", ["sparql", var.base_domain])
-  }
-
-  set {
-    name  = "env"
-    value = yamlencode(flatten([
-      [
-        for tuple in regexall(
-          "(.*?)=(.*)",
-          file("${path.module}/conf_files/sparql/virtuoso.ini_env")
-        ): {
-          name  = tuple[0]
-          value = tuple[1]
-        }
-      ],
-      [
-        {
-          name  = "IMPORT_THREAD"
-          value = "2"
-        }
-      ]
-    ]))
-  }
-
-  set {
-    name  = "initdb.enabled"
-    value = true
-  }
-
-  set {
-    name  = "initdb.data"
-    value = yamlencode({
-      for f in fileset("${path.module}/../../volumes/sparql-initdb", "*"):
-      f => file("${path.module}/../../volumes/sparql-initdb/${f}")
-    })
-  }
-
-  set {
-    name  = "persistence.enabled"
-    value = true
-  }
-
-  set {
-    name  = "persistence.size"
-    value = "8Gi"
-  }
-
-  depends_on = [
-    kubernetes_namespace.namespace
-  ]
-}
+# No sparql as we are hitting the production endpoint in dev env
 
 
 resource "helm_release" "db" {
