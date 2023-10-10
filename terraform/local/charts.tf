@@ -87,7 +87,7 @@ resource "helm_release" "tomcat" {
   set_sensitive {
     name  = "catalinaOpts"
     value = <<EOL
--Dagrold.db_connection_url='mysql.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local/agrolddb?useSSL=false' -Dagrold.db_username='${var.agrold_db_username}' -Dagrold.db_password='${var.agrold_db_password}' -Dagrold.name='${var.agrold_name}' -Dagrold.description='${var.agrold_description}' -Dagrold.baseurl='http://${var.base_domain}/' -Dagrold.sparql_endpoint='${var.sparql_endpoint}'
+-Dagrold.db_connection_url='mysql.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local/agrolddb?useSSL=false' -Dagrold.db_username='${var.agrold_db_username}' -Dagrold.db_password='${var.agrold_db_password}' -Dagrold.name='${var.agrold_name}' -Dagrold.description='${var.agrold_description}' -Dagrold.baseurl='http://${var.base_domain}/' -Dagrold.sparql_endpoint='${var.sparql_endpoint}' -Dagrold.rf_link='http://${join(".", ["rf", var.base_domain])}'
 EOL
   }
 
